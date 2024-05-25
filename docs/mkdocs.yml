@@ -1,0 +1,111 @@
+# Project information
+site_name: "PFFmpeg"
+site_description: "Progress bar for FFmpeg"
+site_author: "Clément GUICHARD"
+copyright: "Copyright &copy; 2024, Clément GUICHARD"
+
+# Repository
+repo_name: "CGuichard/pffmpeg"
+repo_url: "https://github.com/CGuichard/pffmpeg"
+edit_uri: edit/main/docs/src
+
+# Configuration
+site_dir: "build/html"
+docs_dir: "src"
+theme:
+  name: material
+  language: en
+  features:
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.tooltips
+    - navigation.footer
+    - navigation.indexes
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Palette toggle for auto-system mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Switch to system preference
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.snippets:
+      base_path: ["..", "src"]
+      check_paths: true
+  - toc:
+      permalink: true
+
+# Plugins
+plugins:
+  - search
+  - tags
+  - termynal
+  - section-index
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [../src]
+          options:
+            docstring_style: google
+            show_category_heading: true
+            show_signature_annotations: true
+            show_source: false
+            separate_signature: true
+
+# Page tree
+nav:
+  - Home:
+      - Overview: index.md
+      - Changelog: changelog.md
+      - License: license.md
+  - Getting started:
+      - Installation: getting-started/installation.md
+      - Usage: getting-started/usage.md
+  - API Reference: reference/
+  - Development:
+      - Contributing: development/contributing.md
+      - Source code: "https://github.com/CGuichard/pffmpeg"
+      - Issues: "https://github.com/CGuichard/pffmpeg/issues"
+
+# Footer links
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: "https://github.com/CGuichard/pffmpeg"
+    - icon: fontawesome/brands/python
+      link: "https://pypi.org/project/pffmpeg/"
+    - icon: fontawesome/brands/dev
+      link: "https://github.com/CGuichard/pffmpeg/issues"

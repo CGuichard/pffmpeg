@@ -1,0 +1,67 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_stages: [commit]
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+default_language_version:
+  python: python3.10
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=15000"]
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+        args: ["--unsafe"]
+      - id: debug-statements
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+      - id: trailing-whitespace
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.27.0
+    hooks:
+      - id: commitizen
+      - id: commitizen-branch
+        args: [--rev-range, HEAD]
+        stages: [push]
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.18
+    hooks:
+      - id: validate-pyproject
+
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: Ruff format (python)
+        entry: ruff format --force-exclude
+        language: python
+        files: "^(src|tests)"
+        types_or: [python, pyi]
+        require_serial: true
+      - id: ruff-lint
+        name: Ruff lint (python)
+        entry: ruff check --fix --exit-non-zero-on-fix
+        language: python
+        files: "^(src|tests)"
+        types_or: [python, pyi]
+        require_serial: true
+      - id: mypy
+        name: Mypy type check (python)
+        entry: mypy
+        language: python
+        files: "^src"
+        types_or: [python, pyi]
+        require_serial: true

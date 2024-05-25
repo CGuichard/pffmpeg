@@ -1,0 +1,6 @@
+mkdocs-material~=9.5
+mkdocs-section-index~=0.3
+mkdocstrings~=0.25
+mkdocstrings-python~=1.10
+mkdocs~=1.6
+termynal~=0.12
