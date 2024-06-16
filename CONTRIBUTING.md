@@ -8,7 +8,6 @@ some new ideas to improve it!
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
 - [Code of Conduct](#code-of-conduct)
 - [Getting started](#getting-started)
   - [Pre-requisites](#pre-requisites)

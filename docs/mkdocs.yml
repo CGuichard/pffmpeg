@@ -30,6 +30,8 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
+  logo: assets/img/logo-light.png
+  favicon: assets/img/favicon.ico
   icon:
     repo: fontawesome/brands/github
   palette:
@@ -41,16 +43,16 @@ theme:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: green
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: green
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to system preference
@@ -61,6 +63,9 @@ markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.snippets:
       base_path: ["..", "src"]
       check_paths: true
@@ -85,20 +90,26 @@ plugins:
             show_source: false
             separate_signature: true
 
+# Extras
+extra_css:
+  - assets/css/extra.css
+
 # Page tree
 nav:
   - Home:
       - Overview: index.md
-      - Changelog: changelog.md
-      - License: license.md
-  - Getting started:
-      - Installation: getting-started/installation.md
-      - Usage: getting-started/usage.md
-  - API Reference: reference/
+      - Getting started:
+        - Installation: installation.md
+        - Usage: usage.md
+      - About:
+        - Changelog: changelog.md
+        - License: license.md
   - Development:
       - Contributing: development/contributing.md
       - Source code: "https://github.com/CGuichard/pffmpeg"
       - Issues: "https://github.com/CGuichard/pffmpeg/issues"
+  - API Reference:
+      - pffmpeg: reference.md
 
 # Footer links
 extra:

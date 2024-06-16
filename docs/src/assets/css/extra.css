@@ -1,0 +1,12 @@
+:root {
+    --md-primary-fg-color: #007902;
+    --md-primary-fg-color--light: #12a515;
+    --md-primary-fg-color--dark: #0f5710;
+
+    --md-accent-fg-color: #5cb85c;
+    --md-accent-fg-color--transparent: hsla(120, 39%, 54%, 0.1);
+}
+
+.terminal-gif, .termy {
+    border-radius: 15px !important;
+}
