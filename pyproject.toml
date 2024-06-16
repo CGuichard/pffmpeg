@@ -20,7 +20,7 @@ keywords = [
     "rich",
 ]
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Framework :: Hatch",
     "Framework :: MkDocs",
@@ -54,6 +54,9 @@ dynamic = ["version"]
 "Changelog" = "https://cguichard.github.io/pffmpeg/changelog/"
 "Source" = "https://github.com/CGuichard/pffmpeg"
 "Tracker" = "https://github.com/CGuichard/pffmpeg/issues"
+
+[project.scripts]
+pffmpeg = "pffmpeg._cli:pffmpeg"
 
 # -----------------------------------------------
 # Build & Packaging
