@@ -20,7 +20,7 @@ keywords = [
     "rich",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Framework :: Hatch",
     "Framework :: MkDocs",
@@ -106,6 +106,7 @@ addopts = [
 branch = true
 parallel = true
 omit = [
+    "*/__main__.py",
     "tests/*",
 ]
 
