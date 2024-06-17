@@ -12,6 +12,7 @@
   ![Style](https://img.shields.io/badge/Style-ruff-9a9a9a?style=flat-square)
   ![Lint](https://img.shields.io/badge/Lint-ruff,%20mypy-brightgreen?style=flat-square)
   ![Security](https://img.shields.io/badge/Security-bandit,%20pip%20audit-purple?style=flat-square)
+  [![Tests](https://github.com/CGuichard/pffmpeg/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/CGuichard/pffmpeg/actions/workflows/tests.yml)
 
   [Pull Request](https://github.com/CGuichard/pffmpeg/pulls) **·**
   [Bug Report](https://github.com/CGuichard/pffmpeg/issues/new?template=bug_report.md) **·**
