@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build:
+    name: Build distribution package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+      - name: Update pip
+        run: pip install --upgrade pip
+      - name: Install build dependencies
+        run: pip install build
+      - name: Run build
+        run: python -mbuild
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: py-dist
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pffmpeg
+    permissions:
+      id-token: write # IMPORTANT: mandatory for trusted publishing
+    steps:
+      - name: Download distribution artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: py-dist
+          path: dist/
+      - name: Publish distribution package
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  gh-release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    needs: [publish-pypi]
+    permissions:
+      contents: write # IMPORTANT: mandatory for making GitHub Releases
+      id-token: write # IMPORTANT: mandatory for sigstore
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Download distribution artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: py-dist
+          path: dist/
+      - name: Sign the distribution artifacts with Sigstore
+        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        with:
+          inputs: ./dist/*
+      - name: Generate release body
+        run: ./scripts/get_latest_release_notes.py --github-release > body.md
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
+          bodyFile: "body.md"
