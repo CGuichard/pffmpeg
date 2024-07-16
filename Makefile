@@ -15,6 +15,7 @@ default: help
 
 release: ## Bump version, create tag and update `CHANGELOG.md`.
 	@$(PYTHON) -mcommitizen bump --yes --changelog
+	@./scripts/update_latest_tag_msg.sh
 
 build: ## Build wheel and tar.gz in 'dist/'.
 	@$(PYTHON) -mbuild
