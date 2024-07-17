@@ -75,6 +75,13 @@ version_scheme = "python-simplified-semver"
 version_provider = "scm"
 annotated_tag = true
 changelog_incremental = true
+change_type_order = ["Features", "Bug fixes", "Perf", "Internal"]
+
+[tool.commitizen.change_type_map]
+feat = "Features"
+fix = "Bug fixes"
+refactor = "Internal"
+perf = "Perf"
 
 # -----------------------------------------------
 # Tests
