@@ -20,8 +20,8 @@ from rich.progress import (
 from pffmpeg._args import parse_args
 from pffmpeg._utils import KEYBOARD_INTERRUPT_RETURN_CODE, StringBuffer, parse_duration
 
-FFMPEG_DURATION_REGEX = re.compile(r"Duration: (\d{2}):(\d{2}):(\d{2})\.(\d{2})")
-FFMPEG_STATUS_REGEX = re.compile(r"frame=.*time=(\d{2}):(\d{2}):(\d{2})\.(\d{2}).*")
+FFMPEG_DURATION_REGEX = re.compile(r"Duration: (\d{2,}):(\d{2}):(\d{2})\.(\d{2,})")
+FFMPEG_STATUS_REGEX = re.compile(r"frame=.*time=(\d{2,}):(\d{2}):(\d{2})\.(\d{2,}).*")
 
 FFMPEG_CONFIRM_TEXT = "[y/N] "
 
