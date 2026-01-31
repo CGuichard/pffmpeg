@@ -4,6 +4,7 @@ from io import StringIO
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from pffmpeg._runner import (
     DisplayProgressBarState,
     FfmpegRunnerWithProgressBar,
@@ -14,13 +15,13 @@ from pffmpeg._runner import (
 )
 
 
-def test_initial_state_is_null_state():
+def test_initial_state_is_null_state() -> None:
     """Initial runner state is NullState."""
     runner = FfmpegRunnerWithProgressBar()
     assert isinstance(runner.state, NullState)
 
 
-def test_change_state():
+def test_change_state() -> None:
     """Method change_state should instantiate given state class for runner."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -30,7 +31,7 @@ def test_change_state():
 
 
 @patch("rich.progress.Progress.update")
-def test_set_total_duration(mock_progress_update: MagicMock):
+def test_set_total_duration(mock_progress_update: MagicMock) -> None:
     """Method set_total_duration check.
 
     The method `set_total_duration` should set total_duration
@@ -47,7 +48,9 @@ def test_set_total_duration(mock_progress_update: MagicMock):
 
 @patch("rich.progress.Progress.update")
 @patch("rich.progress.Progress.start")
-def test_set_progress(mock_progress_start: MagicMock, mock_progress_update: MagicMock):
+def test_set_progress(
+    mock_progress_start: MagicMock, mock_progress_update: MagicMock
+) -> None:
     """Method set_progress should call progress.update and progress.start."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -61,7 +64,7 @@ def test_set_progress(mock_progress_start: MagicMock, mock_progress_update: Magi
 @patch("rich.progress.Progress.start")
 def test_set_progress_none(
     mock_progress_start: MagicMock, mock_progress_update: MagicMock
-):
+) -> None:
     """Method set_progress should not trigger progress start if given None."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -72,7 +75,7 @@ def test_set_progress_none(
 
 
 @patch("rich.progress.Progress.stop")
-def test_runner_stop_progress(mock_progress_stop: MagicMock):
+def test_runner_stop_progress(mock_progress_stop: MagicMock) -> None:
     """Method stop_progress should call progress.stop()."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -88,7 +91,7 @@ def test_runner_complete_progress(
     mock_print_line: MagicMock,
     mock_stop_progress: MagicMock,
     mock_set_progress: MagicMock,
-):
+) -> None:
     """Method complete_progress call set_progress, stop_progress and print_line."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -100,7 +103,7 @@ def test_runner_complete_progress(
 
 
 @patch("sys.stderr", new_callable=StringIO)
-def test_print_line(mock_stderr: StringIO):
+def test_print_line(mock_stderr: StringIO) -> None:
     """Method print_line should print to sys.stderr."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -110,7 +113,7 @@ def test_print_line(mock_stderr: StringIO):
 
 
 @patch("sys.stderr", new_callable=StringIO)
-def test_print_line_with_no_new_line(mock_stderr: StringIO):
+def test_print_line_with_no_new_line(mock_stderr: StringIO) -> None:
     r"""Method print_line with newline should print to sys.stderr without `\n`."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -119,7 +122,7 @@ def test_print_line_with_no_new_line(mock_stderr: StringIO):
     assert mock_stderr.getvalue() == "My test line"
 
 
-def test_null_state_raise_runtime_error():
+def test_null_state_raise_runtime_error() -> None:
     """NullState should raise a RuntimeError."""
     runner = FfmpegRunnerWithProgressBar()
 
@@ -130,7 +133,7 @@ def test_null_state_raise_runtime_error():
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "print_line")
-def test_print_before_duration_state_prints_line(mock_print_line: MagicMock):
+def test_print_before_duration_state_prints_line(mock_print_line: MagicMock) -> None:
     """PrintBeforeDurationState should print any line."""
     runner = FfmpegRunnerWithProgressBar()
     runner.change_state(PrintBeforeDurationState)
@@ -141,7 +144,9 @@ def test_print_before_duration_state_prints_line(mock_print_line: MagicMock):
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "set_total_duration")
-def test_print_before_duration_state_set_duration(mock_set_total_duration: MagicMock):
+def test_print_before_duration_state_set_duration(
+    mock_set_total_duration: MagicMock,
+) -> None:
     """PrintBeforeDurationState should print any line."""
     runner = FfmpegRunnerWithProgressBar()
     runner.change_state(PrintBeforeDurationState)
@@ -149,15 +154,15 @@ def test_print_before_duration_state_set_duration(mock_set_total_duration: Magic
     runner.state.handle_line("Duration: 00:00:10.00")
 
     mock_set_total_duration.assert_called_once_with(10.0)
-    assert isinstance(
-        runner.state, PrintBeforeProgressState
-    ), "State should change if line contains the duration"
+    assert isinstance(runner.state, PrintBeforeProgressState), (
+        "State should change if line contains the duration"
+    )
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "print_line")
 def test_print_before_progress_state(
     mock_print_line: MagicMock,
-):
+) -> None:
     """DisplayProgressBarState should set progress completed value if status line."""
     runner = FfmpegRunnerWithProgressBar()
     runner.change_state(PrintBeforeProgressState)
@@ -165,15 +170,15 @@ def test_print_before_progress_state(
     runner.state.handle_line("Some output")
 
     mock_print_line.assert_called_once_with("Some output")
-    assert isinstance(
-        runner.state, PrintBeforeProgressState
-    ), "State should not change if line is not a status line"
+    assert isinstance(runner.state, PrintBeforeProgressState), (
+        "State should not change if line is not a status line"
+    )
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "print_line")
 def test_print_before_progress_state_when_status_line(
     mock_print_line: MagicMock,
-):
+) -> None:
     """DisplayProgressBarState should set progress completed value if status line."""
     runner = FfmpegRunnerWithProgressBar()
     runner.change_state(PrintBeforeProgressState)
@@ -181,9 +186,9 @@ def test_print_before_progress_state_when_status_line(
     runner.state.handle_line("frame=999 time=00:00:05.00")
 
     mock_print_line.assert_not_called()
-    assert isinstance(
-        runner.state, DisplayProgressBarState
-    ), "State should change if line is a status line"
+    assert isinstance(runner.state, DisplayProgressBarState), (
+        "State should change if line is a status line"
+    )
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "complete_progress")
@@ -191,7 +196,7 @@ def test_print_before_progress_state_when_status_line(
 def test_display_progress_bar_state_handles_progress_not_completed(
     mock_set_progress: MagicMock,
     mock_complete_progress: MagicMock,
-):
+) -> None:
     """DisplayProgressBarState should set progress completed value if status line."""
     runner = FfmpegRunnerWithProgressBar()
     runner.change_state(DisplayProgressBarState)
@@ -200,15 +205,15 @@ def test_display_progress_bar_state_handles_progress_not_completed(
 
     mock_complete_progress.assert_not_called()
     mock_set_progress.assert_called_once_with(5.0)  # 5 seconds
-    assert isinstance(
-        runner.state, DisplayProgressBarState
-    ), "State should not change because progress is not completed"
+    assert isinstance(runner.state, DisplayProgressBarState), (
+        "State should not change because progress is not completed"
+    )
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "complete_progress")
 def test_display_progress_bar_state_handles_progress_completed(
     mock_complete_progress: MagicMock,
-):
+) -> None:
     """DisplayProgressBarState completion.
 
     DisplayProgressBarState should call runner.complete_progress and change state
@@ -220,13 +225,13 @@ def test_display_progress_bar_state_handles_progress_completed(
     runner.state.handle_line("Not status line")
 
     mock_complete_progress.assert_called_once()
-    assert isinstance(
-        runner.state, PrintAfterProgressState
-    ), "State should change if line is not a status line"
+    assert isinstance(runner.state, PrintAfterProgressState), (
+        "State should change if line is not a status line"
+    )
 
 
 @patch.object(FfmpegRunnerWithProgressBar, "print_line")
-def test_print_after_progress_state(mock_print_line: MagicMock):
+def test_print_after_progress_state(mock_print_line: MagicMock) -> None:
     """PrintAfterProgressState should print lines."""
     runner = FfmpegRunnerWithProgressBar()
     runner.change_state(PrintAfterProgressState)

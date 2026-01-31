@@ -1,34 +1,39 @@
 # Contributing
 
-Thank you for wanting to contribute to this project!
+<!-- --8<-- [start:header] -->
 
-The following elements will allow you to contribute with a little guide
-to learn how to make an approved contribution. Don't hesitate to share
-some new ideas to improve it!
+First off, thanks for wanting to contribute! 🎉
+
+We appreciate your contributions and engagement. Even if you don't know how to code,
+contributions are not always about coding. Everyone can help in their own way,
+by reporting typos, or improving the documentation for example. Every bug report,
+suggestion, and discussion helps improve the project.
+
+The following elements will allow you to contribute, with a little guide to learn how
+to make an approved contribution. Don't hesitate to share some new ideas to improve it!
+
+<!-- --8<-- [end:header] -->
 
 ## Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
 - [Getting started](#getting-started)
   - [Pre-requisites](#pre-requisites)
   - [Clone the repository](#clone-the-repository)
   - [Environment setup](#environment-setup)
 - [How to contribute?](#how-to-contribute)
   - [Organization](#organization)
-    - [Report issues](#report-issues)
-    - [Work on issues](#work-on-issues)
-    - [Pull Requests](#pull-requests)
-    - [Release](#release)
+    - [Reporting issues](#reporting-issues)
+    - [Suggesting Enhancements](#suggesting-enhancements)
+    - [Working on issues](#working-on-issues)
   - [Writing code](#writing-code)
     - [References](#references)
     - [Quality Assurance](#quality-assurance)
-      - [Development method](#development-method)
       - [Lint](#lint)
       - [Tests](#tests)
-      - [Security](#security)
       - [Documentation](#documentation)
+      - [Security](#security)
+    - [Release](#release)
   - [Git](#git)
-    - [Ignore](#ignore)
     - [Hooks](#hooks)
     - [Pull](#pull)
     - [Branches](#branches)
@@ -37,44 +42,28 @@ some new ideas to improve it!
       - [Scopes](#scopes)
       - [Subject](#subject)
 
-## Code of Conduct
-
-When you are contributing, keep in mind to:
-
-- Remain respectful of different points of view and experiences.
-- Accept constructive criticism.
-- Show sympathy for other contributors.
+<!-- --8<-- [start:content] -->
 
 ## Getting started
 
 ### Pre-requisites
 
-We recommended a linux-based distribution. You will need the following
-tools on your system:
+We recommend a Linux-based distribution. You will need the following tools on your system:
 
-- [Git](https://git-scm.com/)
-- [Make](https://www.gnu.org/software/make/)
-- [Python](https://www.python.org/)
-- [Virtualenv](https://virtualenv.pypa.io/)
+- [Git](https://git-scm.com/): version control system.
+- [Python](https://www.python.org/) (≥3.10): language of the project,
+  you'll need the interpreter.
+- [Make](https://www.gnu.org/software/make/): utility mandatory to run the `make` command,
+  that we use for shortcuts of most-used commands in the project life-cycle.
+- [uv](https://docs.astral.sh/uv/) (≥0.9.0): package and project manager for Python.
 
 ### Clone the repository
 
 ```bash
-git clone https://github.com/CGuichard/pffmpeg
+git clone https://github.com/CGuichard/pffmpeg.git
 ```
 
 ### Environment setup
-
-First, create an isolated Python virtual environment:
-
-```bash
-virtualenv -p python3.10 .venv
-source .venv/bin/activate
-pip install --upgrade pip
-# OR
-python3.10 -mvenv --upgrade-deps .venv
-source .venv/bin/activate
-```
 
 List available commands:
 
@@ -82,81 +71,84 @@ List available commands:
 make help
 ```
 
-You must also install in editable mode, with dev dependencies.
+To setup your development environment please run `make setup`.
 
-```bash
-make install-dev
-```
+Here's what it does:
 
-This project uses multiple tools for its development, and your virtual
-environment created earlier is just here to give you a working
-development environment. Some tools are handled in sub-virtual
-environments created by [Tox](https://tox.wiki), a virtual env manager
-and automation tool. The `install-dev` only gives you the tools that you
-will be directly using, delegating other installations inside of *Tox*
-virtual envs.
-
-In order to complete the environment setup, you must install some Git
-Hooks. You can refer to the dedicated section of this document: [Hooks](#hooks).
+- `uv sync`: create an isolated Python virtual environment, install the project in
+  editable mode, synchronize project dependencies, and also install `dev` dependency group.
+- `pre-commit install --install-hooks`: install pre-commit [hooks](#hooks).
 
 ## How to contribute?
 
 ### Organization
 
-#### Report issues
+#### Reporting issues
 
 Traceability is necessary for a healthy development environment. Each
-bug encountered must be reported with the creation of an issue. Details
+bug encountered must be reported by the creation of a new issue. Details
 on how to reproduce it must be provided, and if possible visuals
 (screenshots) are welcome.
 
-There are two kinds of issue:
+Open a [Bug Report](https://github.com/CGuichard/pffmpeg/issues/new?template=bug_report.md)
+for issues that you encountered, if it's not already present in the issue tracker.
 
-- [Bug Report](https://github.com/CGuichard/pffmpeg/issues/new?template=bug_report.md)
-- [Feature Request](https://github.com/CGuichard/pffmpeg/issues/new?template=feature_request.md)
+Before Submitting an Issue:
 
-Click on these links to visit the issue creation page, with a simple
-template to guide you.
+- **Check Existing Issues**: Your question or bug may already be reported.
+- **Search the Documentation**: Ensure the answer isn’t already covered.
 
-Please, remember that a title isn't enough for an issue.
+#### Suggesting Enhancements
 
-#### Work on issues
+If you have an idea to improve the project, we would love to hear it!
+Please create a [Feature Request](https://github.com/CGuichard/pffmpeg/issues/new?template=feature_request.md)
+if something comes to your mind.
+
+#### Working on issues
 
 You can work on every open issue. Keep in mind to reference them in your
-commits and pull requests, by following the [GitHub convention](https://docs.github.com/en/github/writing-on-github/autolinked-references-and-urls#issues-and-pull-requests).
+commits and pull requests, by following the [GitHub autolink convention](https://docs.github.com/en/github/writing-on-github/autolinked-references-and-urls#issues-and-pull-requests).
 
-You must work on a separate branch for each issue. Check out
-the [branch naming convention](#branches).
+1. **Fork the Repository** by clicking the "Fork" button on the repository page.
+2. **Clone the Fork** to your local machine.
 
-#### Pull Requests
+   ```bash
+   git clone https://github.com/CGuichard/pffmpeg.git
+   cd pffmpeg
+   ```
 
-Please follow these guidelines:
+3. **Follow the [Getting started](#getting-started) section** for project setup.
+4. **Create a new branch** to work on.
+   Check our [branch naming convention](#branches).
 
-- Use a clear and descriptive title.
-- Include every relevant issue number in the body, not in the title.
-- Give a complete description of every change made in the body.
+   ```bash
+   git checkout -b (fix-or-feat)/your-topic-name
+   ```
 
-If a branch is merged and no longer needed, make sure it was closed.
+5. **Commit your changes** with a clear and concise commit message.
+   Check our [commit convention](#commit).
+6. **Push your changes** to your fork.
 
-#### Release
+   ```bash
+   git push origin --upstream (fix-or-feat)/your-topic-name
+   ```
 
-You can create a release with `make release`. Because we follow a
-[commit convention](#commit), the next version is guessed from
-the commit history. The `CHANGELOG.md` is generated automatically too.
+7. **Create a Pull Requests** from your fork's branch to the main repository's main
+   branch. Provide a clear and concise description of your changes and the problem
+   they address.
 
-Don't forget to push the tags to your origin repo!
+   Please follow these guidelines:
 
-```bash
-git push --tags
-```
+   - Use a clear and descriptive title.
+   - Include every relevant issue number in the body, not in the title.
+   - Give a complete description of every change made in the body.
 
 ### Writing code
 
 #### References
 
-Writing clean code is very important for a project. References such as
-"Clean Code", by Robert C. Martin, are good to keep in mind. Readable
-code is not a luxury, it is a necessity.
+Writing clean code is very important for a project. We read way more code than we write,
+readable code is not a luxury, it is a necessity.
 
 Let us be reminded of the Zen of Python, by Tim Peters:
 
@@ -183,39 +175,18 @@ Namespaces are one honking great idea -- let's do more of those!
 ```
 
 You are not alone for this difficult task. In the next sections you will
-find about our recommended development method, our linting and
-formatting tools, and how to use tests.
+find about our QA tools.
 
 #### Quality Assurance
-
-##### Development method
-
-The favored method of development will be TDD (Test Driven Development).
-
-The TDD process can be explained like this:
-
-1. Add a test.
-2. Run all tests. The new test should fail for expected reasons
-    (failing by compilation error doesn't count as true failing, you
-    must be able to compile your code).
-3. Write the simplest code that passes the new test.
-4. All tests should now pass.
-5. Refactor as needed, using tests after each refactors to ensure that
-    functionality is preserved
-
-Repeat...
 
 ##### Lint
 
 To ensure good code writing, we use a lot of lint tools:
 
-- [validate-pyproject](https://validate-pyproject.readthedocs.io):
-    command line tool and Python library for validating
-    `pyproject.toml`, includes models defined for `PEP 517`, `PEP 518`
-    and `PEP 621`.
 - [ruff](https://docs.astral.sh/ruff/): an extremely fast Python linter and formatter,
-    written in Rust. Integrate `pyupgrade`, `pylint`, `bandit`, `isort`,
-    `eradicate`, and `flake8` with dozens of its plugins.
+  written in Rust. Compatible with `black` formatting style, implement for
+  linting `pylint`, `bandit`, `isort`, `pyupgrade`, `eradicate`, and `flake8` with
+  dozens of its plugins. Check the configuration in our `pyproject.toml`.
 - [mypy](https://mypy.readthedocs.io): static type checker.
 
 These tools are run with:
@@ -224,40 +195,33 @@ These tools are run with:
 make lint
 ```
 
-You can use `lint-watch` to run ruff on `src/` with `--watch` flag. This
+You can use `lint-watch` to run these tool on file change in `src/`. This
 is really useful as it gives you instantaneous feedback on your code.
 
-> Note: All of these are also run for each commit, failing the commit
-> if at least one error is found.
+> Note: The linting is run for each commit thanks to our [hooks](#hooks),
+> failing the commit if at least one error is found.
 
 ##### Tests
 
 We shall always aim for the highest code coverage in our tests, and our
 development environment should use tools that will help us ensure it.
 
-The test frameworks used are unittest and pytest, run with tox. Thanks
-to pytest-cov, code coverage is evaluated and fails under 90% of test
-coverage.
+The test frameworks used are unittest and pytest. With pytest-cov the
+code coverage is evaluated and fails under 80% of test coverage.
 
-Run the tests with *make*:
+Run the tests with:
 
 ```bash
 make test
 ```
 
-> Note: Tests are run before each push, failing the push if it fails.
-
-##### Security
-
-We use [pip-audit](https://pypi.org/project/pip-audit/) to check our Python
-dependencies for potential security vulnerabilities and suggests the
-proper remediations for vulnerabilities detected.
+Or, if you want to run the tests across all supported Python version:
 
 ```bash
-make security
+make test-matrix
 ```
 
-> Note: Security check is run before each push, failing the push if it fails.
+> Note: Tests are run before each push, failing the push if it fails.
 
 ##### Documentation
 
@@ -273,13 +237,6 @@ You can build the docs with:
 make docs
 ```
 
-If you want to build the docs, and serve it with an http server after
-the build:
-
-```bash
-make docs serve
-```
-
 When writing the docs, use the live server to automatically rebuild the
 docs.
 
@@ -287,35 +244,29 @@ docs.
 make docs-live
 ```
 
+> Note: Documentation site is built before each push, failing the push if it fails.
+
+##### Security
+
+We use [`pip-audit`](https://pypi.org/project/pip-audit/) in our CI to check
+our Python dependencies for potential security vulnerabilities.
+
+To measure your dependencies freshness regardless of security concerns,
+the CI also makes use of [`libyear`](https://libyear.com/).
+
+#### Release
+
+Releases are created with `make release`. Because we follow a strict
+[commit convention](#commit), the next version is guessed from the commit history.
+The `CHANGELOG.md` file is generated automatically too.
+
+Tags created when releasing should be pushed to the origin remote!
+
+```bash
+git push --tags
+```
+
 ### Git
-
-#### Ignore
-
-When you want to hide something from Git's all-seeing eyes, don't
-stubbornly use the `.gitignore` file. There are three native ways in Git
-to ignore files/folders:
-
-1. `.gitignore`: Patterns that should be version-controlled and
-    distributed to other repositories via clone (i.e., files that all
-    developers will want to ignore), to put it bluntly, non-tracked
-    files generated by the project lifecycle can be put here.
-2. `.git/info/exclude`: Patterns that are specific to a particular
-    repository but which do not need to be shared with other related
-    repositories (e.g., auxiliary files that live inside the repository
-    but are specific to one user's workflow).
-3. Patterns which a user wants Git to ignore in all situations (e.g.,
-    backup or temporary files generated by the user's editor of choice)
-    generally go into a file specified by `core.excludesFile` in the
-    user's `~/.gitconfig`.
-
-More details in the full *official* documentation of Git
-[here](https://git-scm.com/docs/gitignore).
-
-To summarize, don't write in the `.gitignore` files generated by your
-workflow if it is not common to all developers on the project. To serve
-that purpose, mandatory tools must be specified in this section.
-
-*There is no mandatory IDE/tool at the moment.*
 
 #### Hooks
 
@@ -323,19 +274,13 @@ We use [Pre-commit](https://pre-commit.com/) to run tools at specific
 moments of the Git workflow, with [Git Hooks](https://git-scm.com/docs/githooks).
 It will mostly run linting and formatting tools on the source code in our case.
 Some tools will also run for yaml, json, or markdown files etc... The commitizen
-tool will also enforce conventional commit usage, that will ne discussed in
+tool will also enforce conventional commit usage, that will be discussed in
 the [Commit](#commit) section.
-
-To activate our Git Hooks, please run the following commands:
-
-```bash
-pre-commit install --install-hooks
-```
 
 Our hooks needs the following dependencies:
 
-- Python (>=3.10)
-- pre-commit (~=3.7)
+- Python (≥3.10)
+- pre-commit (≥4.0)
 
 #### Pull
 
@@ -381,10 +326,8 @@ Now each `git pull` will use `--rebase` and automatically `stash`!
 
 Here's our branch naming convention:
 
-- Immutable branches:
+- Protected branches:
   - `main`: our main branch, must have no error.
-  - `develop`: branch used to work, where you merge your work
-        branches.
 - Work branches:
   - `<scope>/<short-name>`: you work here.
 
@@ -503,5 +446,8 @@ Git then opens an editor to write the commit.
 type(scope): message
 
 I am the body of the commit and I am not limited in size.
-However, keep in mind that if the commit needs a large description it may be better to have an issue with it.
+However, keep in mind that if the commit needs a large description
+it may be better to have an issue with it.
 ```
+
+<!-- --8<-- [end:content] -->

@@ -7,6 +7,7 @@
     --md-accent-fg-color--transparent: hsla(120, 39%, 54%, 0.1);
 }
 
-.terminal-gif, .termy {
+.terminal-gif,
+.termy {
     border-radius: 15px !important;
 }

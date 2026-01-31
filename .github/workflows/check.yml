@@ -1,0 +1,238 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  git-scan:
+    name: Scan Git history
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+      - name: Run Commitizen
+        run: uvx --from commitizen cz check --rev-range HEAD
+
+  build:
+    name: Build and check distribution package
+    runs-on: ubuntu-latest
+    needs: [git-scan]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+      - name: Run build
+        run: uv build
+      - name: Run twine check
+        run: uvx twine check dist/*
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: build
+          path: dist/
+
+  build-docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    needs: [git-scan]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+      - name: Install documentation dependencies
+        run: uv sync --no-dev --group docs
+      - name: Build documentation
+        run: uv run --directory docs mkdocs build
+
+  audit:
+    name: Audit dependencies
+    runs-on: ubuntu-latest
+    needs: [build]
+    permissions:
+      contents: read # IMPORTANT: mandatory for PR comment
+      pull-requests: write # IMPORTANT: mandatory for PR comment
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+          enable-cache: false
+      - name: Export dependencies
+        run: uv export --no-dev --no-emit-project > requirements.txt
+      - name: Prepare summary
+        run: echo "_Audit dependencies_" >> SUMMARY.md
+      - name: Run pip-audit
+        id: pip-audit
+        continue-on-error: true
+        run: |
+          echo "## pip-audit" >> SUMMARY.md
+          uvx --quiet pip-audit --disable-pip --require-hashes --format markdown --requirement requirements.txt &>> SUMMARY.md
+      - name: Run libyear
+        run: |
+          echo "## libyear" >> SUMMARY.md
+          echo "\`\`\`txt" >> SUMMARY.md
+          uvx --python 3.10 --quiet libyear --sort -r requirements.txt &>> SUMMARY.md
+          echo "\`\`\`" >> SUMMARY.md
+      - name: Job summary
+        run: cat SUMMARY.md >> $GITHUB_STEP_SUMMARY
+      - name: Comment summary on PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: audit
+          file-path: ./SUMMARY.md
+      - name: Fail if pip-audit raised an error
+        if: steps.pip-audit.outcome != 'success'
+        run: exit 1
+
+  sbom:
+    name: Software Bill of Materials
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+      - name: Install project dependencies
+        run: uv sync --no-dev --all-extras
+      - name: Generate SBOM
+        run: |
+          uvx --from cyclonedx-bom cyclonedx-py environment \
+            "$(uv python find)" \
+            --output-reproducible \
+            --output-format JSON \
+            --pyproject pyproject.toml \
+            --mc-type library \
+            --output-file sbom.cyclonedx.json
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v6
+        with:
+          name: sbom
+          path: sbom.cyclonedx.json
+
+  lint:
+    name: Lint source code
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ hashFiles('.pre-commit-config.yaml') }}
+      - name: Install project and dev dependencies
+        run: uv sync --no-dev --all-extras --group vcs
+      - name: Run pre-commit
+        run: uv run pre-commit run --all-files
+
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    env:
+      COVERAGE_FILE: tests-reports/coverage-data
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+          python-version: ${{ matrix.python-version }}
+      - name: Run tests
+        run: |
+          uv run --group test pytest \
+            --ignore tests/test_e2e.py \
+            --junit-xml=tests-reports/junit-report.xml \
+            --cov-report=xml:tests-reports/coverage.xml
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: tests-reports-py${{ matrix.python-version }}
+          path: tests-reports
+
+  test-report:
+    name: Test report
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [test]
+    permissions:
+      contents: write # IMPORTANT: mandatory for coverage report
+      checks: write # IMPORTANT: mandatory for reports
+      pull-requests: write # IMPORTANT: mandatory for reports PR comments
+      issues: read # IMPORTANT: mandatory for private repo
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ">=0.9.0"
+      - name: Download all tests-reports
+        uses: actions/download-artifact@v7
+        with:
+          pattern: tests-reports-py*
+          path: all-reports
+      - name: Combine test reports
+        run: |
+          uv run --with junitparser python - <<EOF
+          import glob
+          from junitparser import JUnitXml
+          xml = JUnitXml()
+          for report in glob.glob("all-reports/**/junit-report.xml"):
+              xml += JUnitXml.fromfile(report)
+          xml.write("junit-report.xml")
+          EOF
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            all-reports/**/junit-report.xml
+      - name: Combine coverage reports
+        run: |
+          uvx --from "coverage[toml]" coverage combine all-reports/**/coverage-data
+          uvx --from "coverage[toml]" coverage xml -o coverage.xml || true
+          uvx --from "coverage[toml]" coverage html -d coverage-site || true
+          uvx --from "coverage[toml]" coverage report --format=markdown >> coverage.md || true
+      - name: Publish Coverage Results
+        uses: insightsengineering/coverage-action@v3
+        with:
+          path: coverage.xml
+          threshold: 80
+          fail: false
+          publish: true
+          diff: true
+          diff-branch: main
+          diff-storage: gh-tests-coverages
+          togglable-report: true
+      - name: Publish job summary report
+        run: |
+          echo "## Code coverage" >> $GITHUB_STEP_SUMMARY
+          cat coverage.md >> $GITHUB_STEP_SUMMARY
+      - name: Upload combined test and coverage reports
+        uses: actions/upload-artifact@v6
+        with:
+          name: tests-reports
+          path: |
+            junit-report.xml
+            coverage.xml
+            coverage-site

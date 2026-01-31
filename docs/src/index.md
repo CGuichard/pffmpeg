@@ -1,4 +1,9 @@
-# PFFmpeg
+---
+hide:
+  - navigation
+---
+
+# Welcome to PFFmpeg
 
 <figure markdown>
   ![Logo](./assets/img/logo.png#only-light){ width="300" }
@@ -8,18 +13,35 @@
 </figure>
 
 <div markdown="1" align="center">
---8<-- "README.md:overview-header"
+--8<-- "README.md:badges"
 </div>
---8<-- "README.md:overview-body"
 
-## Contributing
+## Introduction
 
-If you want to contribute to this project or understand how it works, please check-out
-the [Development](./development/contributing.md) section.
+--8<-- "README.md:introduction"
 
-Any contribution is greatly appreciated.
+For more information on installation and usage, head to the
+[Getting started](./getting-started/install.md) section!
+
+Visit the [Help page](./about/help.md) if you are looking for help.
+
+## How to contribute
+
+Contributions are welcome, and every help is greatly appreciated! If you want to contribute
+to this project please check the [contributing](./development/contributing.md) section.
+
+Everyone contributing to this project is expected to treat other people with
+respect, and more generally to follow the guidelines articulated by our
+[code of conduct](./development/code_of_conduct.md).
+
+## History
+
+We keep a [changelog](./about/changelog.md) to record the changes happening,
+if you have any questions about any changes that have been made,
+don't hesitate to go take a look.
 
 ## License
 
-Distributed under the MIT License. See [License](./license.md) for more
-information.
+Copyright &copy; 2026, Clément GUICHARD
+
+Distributed under the MIT license. See [License](./about/license.md) for more information.

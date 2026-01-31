@@ -52,7 +52,7 @@ class FfmpegRunnerWithProgressBar:
         try:
             cmd = ["ffmpeg", *parse_args(args)]
             process = subprocess.Popen(cmd, stderr=subprocess.PIPE, text=True)  # noqa: S603
-            output = cast(IO[str], process.stderr)
+            output = cast("IO[str]", process.stderr)
             with StringBuffer() as buffer:
                 while process.poll() is None:
                     self._process_output(output, buffer=buffer)
@@ -65,7 +65,7 @@ class FfmpegRunnerWithProgressBar:
 
     def _process_output(self, output: IO[str], /, buffer: StringBuffer) -> None:
         # Handle confirmation inputs
-        if buffer.getvalue().endswith(FFMPEG_CONFIRM_TEXT):
+        if buffer.getvalue().endswith(FFMPEG_CONFIRM_TEXT):  # pragma: no cover
             self.print_line(buffer.popvalue(), newline=False, force=True)
 
         # Handle output parsing and processing

@@ -22,11 +22,11 @@ processing operations will have a progress bar replacing standard output.
 
 Demo with FFmpeg:
 
-![Demo ffmpeg](./assets/img/demo-ffmpeg.gif){ class="terminal-gif" }
+![Demo ffmpeg](../assets/img/demo-ffmpeg.gif){ class="terminal-gif" }
 
 Demo with **P**FFmpeg:
 
-![Demo pffmpeg](./assets/img/demo-pffmpeg.gif){ class="terminal-gif" }
+![Demo pffmpeg](../assets/img/demo-pffmpeg.gif){ class="terminal-gif" }
 
 ## Limits
 

@@ -2,7 +2,7 @@
 site_name: "PFFmpeg"
 site_description: "Progress bar for FFmpeg"
 site_author: "Clément GUICHARD"
-copyright: "Copyright &copy; 2024, Clément GUICHARD"
+copyright: "Copyright &copy; 2026, Clément GUICHARD"
 
 # Repository
 repo_name: "CGuichard/pffmpeg"
@@ -57,6 +57,10 @@ theme:
         icon: material/weather-night
         name: Switch to system preference
 
+# Extras
+extra_css:
+  - assets/css/extra.css
+
 # Extensions
 markdown_extensions:
   - abbr
@@ -77,42 +81,59 @@ plugins:
   - search
   - tags
   - termynal
-  - section-index
+  - gen-files:
+      scripts:
+        - scripts/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
   - mkdocstrings:
       default_handler: python
       handlers:
         python:
           paths: [../src]
           options:
+            docstring_options:
+              ignore_init_summary: true
+              returns_multiple_items: false
+            docstring_section_style: list
             docstring_style: google
+            filters:
+              - "!^_"
+              - "^__"
+            heading_level: 1
+            line_length: 88
+            merge_init_into_class: true
+            separate_signature: true
             show_category_heading: true
+            show_root_heading: true
             show_signature_annotations: true
             show_source: false
-            separate_signature: true
+            summary: true
+            unwrap_annotated: true
 
-# Extras
-extra_css:
-  - assets/css/extra.css
-
-# Page tree
+# Pages
 nav:
-  - Home:
-      - Overview: index.md
-      - Getting started:
-        - Installation: installation.md
-        - Usage: usage.md
-      - About:
-        - Changelog: changelog.md
-        - License: license.md
+  - Home: index.md
+  - Getting started:
+      - Installation: getting-started/install.md
+      - Usage: getting-started/usage.md
+  - API Reference: reference/api/
   - Development:
-      - Contributing: development/contributing.md
+      - development/contributing.md
+      - Code of Conduct: development/code_of_conduct.md
       - Source code: "https://github.com/CGuichard/pffmpeg"
       - Issues: "https://github.com/CGuichard/pffmpeg/issues"
-  - API Reference:
-      - pffmpeg: reference.md
+  - About:
+      - about/help.md
+      - about/changelog.md
+      - about/license.md
 
-# Footer links
 extra:
+  # Versioning
+  version:
+    provider: mike
+    alias: true
+  # Footer links
   social:
     - icon: fontawesome/brands/github
       link: "https://github.com/CGuichard/pffmpeg"
